@@ -8,6 +8,8 @@ import SpotifyStats from "./SpotifyStats"
 import MonthlyRecap from "./export/MonthlyRecap"
 import { useRef } from "react"
 import { exportAsImage } from "../lib/exportImage"
+import { Progress } from "./ui/progress"
+import { useState } from "react"
 
 function TrackSkeleton() {
 	return (
@@ -58,13 +60,31 @@ function SpotifyTopTracks() {
 	} = useSpotify()
 
 	const exportRef = useRef()
+	const [exportProgress, setExportProgress] = useState(0)
 
 	if (!token) {
 		return <LoginPage onLogin={handleSpotifyLogin} />
 	}
 
+	const handleExport = async () => {
+		try {
+			await exportAsImage(
+				exportRef.current,
+				"spotify-monthly-recap",
+				setExportProgress
+			)
+			// Wait a short moment before resetting
+			setTimeout(() => {
+				setExportProgress(0)
+			}, 1000) // Reset after 1 second
+		} catch (error) {
+			console.error("Export failed:", error)
+			setExportProgress(0)
+		}
+	}
+
 	return (
-		<div className="space-y-4 px-4 sm:px-0">
+		<div className="container mx-auto px-4 space-y-4">
 			{loading ? (
 				<ProfileSkeleton />
 			) : (
@@ -166,30 +186,31 @@ function SpotifyTopTracks() {
 						/>
 					</div>
 				</TabsContent>
-				<TabsContent value="export">
-					<div className="space-y-4">
+				<TabsContent value="export" className="flex justify-center w-full">
+					<div className="w-full max-w-[320px] flex flex-col items-center space-y-4">
 						<h2 className="text-xl sm:text-2xl font-bold">Recap Stats</h2>
-						<div className="flex justify-center items-center">
-							<div
-								ref={exportRef}
-								className="p-2 flex justify-center items-center"
-							>
-								<MonthlyRecap
-									timeStats={timeStats}
-									topTracks={shortTermTracks}
-									topArtists={shortTermTopArtists}
-									topGenres={topGenres}
-								/>
-							</div>
+
+						{/* Recap card container */}
+						<div ref={exportRef} className="w-full">
+							<MonthlyRecap
+								timeStats={timeStats}
+								topTracks={shortTermTracks}
+								topArtists={shortTermTopArtists}
+								topGenres={topGenres}
+							/>
 						</div>
-						<div className="max-w-md mx-auto">
+
+						{/* Export controls */}
+						<div className="w-full space-y-4">
+							{exportProgress > 0 && (
+								<Progress value={exportProgress} className="w-full" />
+							)}
 							<Button
-								onClick={() =>
-									exportAsImage(exportRef.current, "spotify-monthly-recap")
-								}
-								className="w-full mt-4"
+								onClick={handleExport}
+								className="w-full"
+								disabled={exportProgress > 0}
 							>
-								Export as Image
+								{exportProgress > 0 ? "Exporting..." : "Export as Image"}
 							</Button>
 						</div>
 					</div>
