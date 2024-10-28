@@ -1,6 +1,6 @@
-const CLIENT_ID = "978f14e340ac4bc3b3990dbaca5ce586"
-const CLIENT_SECRET = "2c97f3f438e14252aa4354ed918780a8"
-const REDIRECT_URI = "http://localhost:5173/callback"
+const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
+const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
+const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI
 const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 const RESPONSE_TYPE = "token"
 
