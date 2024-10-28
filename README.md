@@ -1,8 +1,20 @@
-# React + Vite
+# Spotify Stats Viewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web application that allows users to view their Spotify listening statistics, including top tracks, artists, and listening habits.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎵 View your top tracks
+- 🎨 Display personalized music statistics
+- 📊 Analyze listening habits
+- 🎧 Track listening time
+- 👤 User profile with top genres
+- 📱 Fully responsive design
+
+## Tech Stack
+
+- **Frontend Framework**: React + Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Authentication**: Spotify OAuth
+- **Icons**: Lucide React
