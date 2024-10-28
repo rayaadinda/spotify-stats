@@ -15,6 +15,7 @@ export const useSpotify = () => {
 	const [shortTermTracks, setShortTermTracks] = useState([])
 	const [mediumTermTracks, setMediumTermTracks] = useState([])
 	const [longTermTracks, setLongTermTracks] = useState([])
+	const [shortTermTopArtists, setShortTermTopArtists] = useState([])
 
 	useEffect(() => {
 		const hash = window.location.hash
@@ -25,9 +26,27 @@ export const useSpotify = () => {
 				.substring(1)
 				.split("&")
 				.find((elem) => elem.startsWith("access_token"))
-				.split("=")[1]
-			window.location.hash = ""
-			window.localStorage.setItem("token", token)
+				?.split("=")[1]
+
+			if (token) {
+				window.location.hash = ""
+				window.localStorage.setItem("token", token)
+			}
+		}
+
+		// Check if token is expired
+		if (token) {
+			fetch("https://api.spotify.com/v1/me", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}).then((response) => {
+				if (response.status === 401) {
+					// Token expired, clear it and redirect to login
+					window.localStorage.removeItem("token")
+					window.location.href = "/" // or your login page URL
+				}
+			})
 		}
 
 		setToken(token)
@@ -268,6 +287,28 @@ export const useSpotify = () => {
 		}
 	}
 
+	const getShortTermTopArtists = async () => {
+		try {
+			const response = await fetch(
+				"https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=50",
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			)
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch short term top artists")
+			}
+
+			const data = await response.json()
+			setShortTermTopArtists(data.items)
+		} catch (err) {
+			console.error("Error fetching short term top artists:", err)
+		}
+	}
+
 	useEffect(() => {
 		if (token) {
 			getProfile()
@@ -278,6 +319,7 @@ export const useSpotify = () => {
 			getLongTermTopArtists()
 			getLongTermTopTracks()
 			getAllTimeRangeTracks()
+			getShortTermTopArtists()
 		}
 	}, [token])
 
@@ -308,5 +350,6 @@ export const useSpotify = () => {
 		shortTermTracks,
 		mediumTermTracks,
 		longTermTracks,
+		shortTermTopArtists,
 	}
 }

@@ -5,6 +5,9 @@ import { Button } from "./ui/button"
 import { Skeleton } from "./ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 import SpotifyStats from "./SpotifyStats"
+import MonthlyRecap from "./export/MonthlyRecap"
+import { useRef } from "react"
+import { exportAsImage } from "../lib/exportImage"
 
 function TrackSkeleton() {
 	return (
@@ -51,14 +54,17 @@ function SpotifyTopTracks() {
 		shortTermTracks,
 		mediumTermTracks,
 		longTermTracks,
+		shortTermTopArtists,
 	} = useSpotify()
+
+	const exportRef = useRef()
 
 	if (!token) {
 		return <LoginPage onLogin={handleSpotifyLogin} />
 	}
 
 	return (
-		<div className="space-y-4 px-4 mb-8 sm:px-0">
+		<div className="space-y-4 px-4 sm:px-0">
 			{loading ? (
 				<ProfileSkeleton />
 			) : (
@@ -102,9 +108,10 @@ function SpotifyTopTracks() {
 			)}
 
 			<Tabs defaultValue="top-tracks" className="w-full max-w-[800px] mx-auto">
-				<TabsList className="grid w-full grid-cols-2">
+				<TabsList className="grid w-full grid-cols-3">
 					<TabsTrigger value="top-tracks">Top Tracks</TabsTrigger>
 					<TabsTrigger value="stats">Stats</TabsTrigger>
+					<TabsTrigger value="export">Recap</TabsTrigger>
 				</TabsList>
 				<TabsContent value="top-tracks">
 					<div className="space-y-4">
@@ -157,6 +164,34 @@ function SpotifyTopTracks() {
 							mediumTermTracks={mediumTermTracks}
 							longTermTracks={longTermTracks}
 						/>
+					</div>
+				</TabsContent>
+				<TabsContent value="export">
+					<div className="space-y-4">
+						<h2 className="text-xl sm:text-2xl font-bold">Recap Stats</h2>
+						<div className="flex justify-center items-center">
+							<div
+								ref={exportRef}
+								className="p-2 flex justify-center items-center"
+							>
+								<MonthlyRecap
+									timeStats={timeStats}
+									topTracks={shortTermTracks}
+									topArtists={shortTermTopArtists}
+									topGenres={topGenres}
+								/>
+							</div>
+						</div>
+						<div className="max-w-md mx-auto">
+							<Button
+								onClick={() =>
+									exportAsImage(exportRef.current, "spotify-monthly-recap")
+								}
+								className="w-full mt-4"
+							>
+								Export as Image
+							</Button>
+						</div>
 					</div>
 				</TabsContent>
 			</Tabs>
