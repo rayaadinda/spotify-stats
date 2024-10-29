@@ -10,6 +10,7 @@ import { useRef } from "react"
 import { exportAsImage } from "../lib/exportImage"
 import { Progress } from "./ui/progress"
 import { useState } from "react"
+import { getSpotifyUrl, openInSpotify } from "../lib/spotify-links"
 
 console.log("Current environment:", import.meta.env.MODE)
 
@@ -85,6 +86,30 @@ function SpotifyTopTracks() {
 		}
 	}
 
+	const TrackItem = ({ track, index }) => {
+		return (
+			<div
+				className="flex items-center gap-3 p-3 hover:bg-accent/50 rounded-lg transition-colors border cursor-pointer group"
+				onClick={() => window.open(getSpotifyUrl("track", track.id), "_blank")}
+			>
+				<span className="text-muted-foreground w-5 text-sm">{index + 1}</span>
+				<img
+					src={track.album.images[1]?.url}
+					alt={track.name}
+					className="w-16 h-16 object-cover rounded"
+				/>
+				<div className="flex-grow min-w-0">
+					<h3 className="flex items-start font-medium text-sm truncate">
+						{track.name}
+					</h3>
+					<p className="flex items-start text-xs text-muted-foreground truncate">
+						{track.artists.map((artist) => artist.name).join(", ")}
+					</p>
+				</div>
+			</div>
+		)
+	}
+
 	return (
 		<div className="container mx-auto px-4 space-y-4">
 			{loading ? (
@@ -146,29 +171,7 @@ function SpotifyTopTracks() {
 							) : (
 								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 									{topTracks.map((track, index) => (
-										<div
-											key={track.id}
-											className="flex items-center gap-3 p-3 hover:bg-accent rounded-lg transition-colors border"
-										>
-											<span className="text-muted-foreground w-5 text-sm">
-												{index + 1}
-											</span>
-											<img
-												src={track.album.images[2]?.url}
-												alt={track.name}
-												className="w-10 h-10 object-cover rounded"
-											/>
-											<div className="flex-grow min-w-0">
-												<h3 className="flex items-start font-medium text-sm truncate">
-													{track.name}
-												</h3>
-												<p className="flex items-start text-xs text-muted-foreground truncate">
-													{track.artists
-														.map((artist) => artist.name)
-														.join(", ")}
-												</p>
-											</div>
-										</div>
+										<TrackItem key={track.id} track={track} index={index} />
 									))}
 								</div>
 							)}
