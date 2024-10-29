@@ -51,10 +51,8 @@ function SpotifyStats({
 	const today = new Date().toLocaleDateString()
 	const todayListening = listeningTimeByDay[today] || 0
 
-	// Get the most played artist from long term data
 	const topLongTermArtist = longTermTopArtists?.[0]
 
-	// Hitung total durasi dari semua time range
 	const calculateTotalMinutes = () => {
 		const allTracks = [
 			...shortTermTracks,
@@ -62,21 +60,8 @@ function SpotifyStats({
 			...longTermTracks,
 		]
 
-		// Filter lagu-lagu unik berdasarkan ID
-		const uniqueTracks = Array.from(
-			new Set(allTracks.map((track) => track.id))
-		).map((id) => allTracks.find((track) => track.id === id))
-
-		// Hitung total durasi untuk lagu-lagu dari artis teratas
-		const totalMinutes = uniqueTracks.reduce((total, track) => {
-			if (
-				track.artists.some((artist) => artist.name === topLongTermArtist?.name)
-			) {
-				// Multiply by estimated play count based on time range
-				const playCount = 20 // Estimasi rata-rata pemutaran
-				return total + (track.duration_ms / 60000) * playCount
-			}
-			return total
+		const totalMinutes = allTracks.reduce((total, track) => {
+			return total + track.duration_ms / 60000
 		}, 0)
 
 		return Math.round(totalMinutes)
@@ -92,7 +77,7 @@ function SpotifyStats({
 				subtitle="In the last 50 tracks"
 			/>
 			<StatCard
-				title="Today's Listening Time"
+				title="Listening Time"
 				value={`${todayListening} mins`}
 				subtitle="Minutes listened today"
 			/>

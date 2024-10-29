@@ -12,7 +12,6 @@ export const useSpotify = () => {
 	const [profile, setProfile] = useState(null)
 	const [topTracks, setTopTracks] = useState([])
 	const [topGenres, setTopGenres] = useState([])
-	const [playlists, setPlaylists] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState(null)
 	const [recentlyPlayed, setRecentlyPlayed] = useState([])
@@ -23,6 +22,7 @@ export const useSpotify = () => {
 	const [mediumTermTracks, setMediumTermTracks] = useState([])
 	const [longTermTracks, setLongTermTracks] = useState([])
 	const [shortTermTopArtists, setShortTermTopArtists] = useState([])
+	const [mediumTermTopArtists, setMediumTermTopArtists] = useState([])
 
 	useEffect(() => {
 		const urlToken = getTokenFromUrl()
@@ -121,25 +121,6 @@ export const useSpotify = () => {
 		}
 	}
 
-	const getUserPlaylists = async () => {
-		try {
-			const response = await fetch("https://api.spotify.com/v1/me/playlists", {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			})
-
-			if (!response.ok) {
-				throw new Error("Failed to fetch playlists")
-			}
-
-			const data = await response.json()
-			setPlaylists(data.items)
-		} catch (err) {
-			console.error("Error fetching playlists:", err)
-		}
-	}
-
 	const getRecentlyPlayed = async () => {
 		try {
 			const response = await fetch(
@@ -226,6 +207,28 @@ export const useSpotify = () => {
 		}
 	}
 
+	const getMediumTermTopArtists = async () => {
+		try {
+			const response = await fetch(
+				"https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=50",
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			)
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch medium term top artists")
+			}
+
+			const data = await response.json()
+			setMediumTermTopArtists(data.items)
+		} catch (err) {
+			console.error("Error fetching medium term top artists:", err)
+		}
+	}
+
 	const getLongTermTopTracks = async () => {
 		try {
 			const response = await fetch(
@@ -301,7 +304,7 @@ export const useSpotify = () => {
 			getProfile()
 			getTopTracks()
 			getTopArtistsGenres()
-			getUserPlaylists()
+			getMediumTermTopArtists()
 			getRecentlyPlayed()
 			getLongTermTopArtists()
 			getLongTermTopTracks()
@@ -321,7 +324,6 @@ export const useSpotify = () => {
 		profile,
 		topTracks,
 		topGenres,
-		playlists,
 		recentlyPlayed,
 		timeStats,
 		loading,
@@ -331,6 +333,7 @@ export const useSpotify = () => {
 		longTermTopTracks,
 		shortTermTracks,
 		mediumTermTracks,
+		mediumTermTopArtists,
 		longTermTracks,
 		shortTermTopArtists,
 	}

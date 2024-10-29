@@ -60,6 +60,7 @@ function SpotifyTopTracks() {
 		mediumTermTracks,
 		longTermTracks,
 		shortTermTopArtists,
+		mediumTermTopArtists,
 	} = useSpotify()
 
 	const exportRef = useRef()
@@ -200,11 +201,10 @@ function SpotifyTopTracks() {
 							<MonthlyRecap
 								timeStats={timeStats}
 								topTracks={shortTermTracks}
-								topArtists={shortTermTopArtists}
+								topArtists={mediumTermTopArtists}
 								topGenres={topGenres}
 							/>
 						</div>
-
 						{/* Export controls */}
 						<div className="w-full space-y-4">
 							{exportProgress > 0 && (
