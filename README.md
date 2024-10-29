@@ -1,4 +1,4 @@
-# Spotify Stats Viewer
+# Musc Verse
 
 A web application that allows users to view their Spotify listening statistics, including top tracks, artists, and listening habits.
 
