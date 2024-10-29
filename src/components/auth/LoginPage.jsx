@@ -7,25 +7,26 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card"
-import { AudioWaveform } from "lucide-react"
+import logospo from "@/assets/Primary_Logo.svg"
 
 function LoginPage({ onLogin }) {
+	const handleGetSpotify = () => {
+		window.open("https://www.spotify.com/signup", "_blank")
+	}
+
 	return (
 		<div className="flex items-center justify-center bg-background p-4">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
-					<CardTitle className="text-2xl font-bold">
-						Welcome to Spotify Stats
-					</CardTitle>
+					<CardTitle className="text-2xl font-bold">Musc Verse</CardTitle>
 					<CardDescription>
 						View your top tracks, artists, and listening statistics
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<div className="flex justify-center">
-						{/* You can add your own logo or illustration here */}
-						<div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center">
-							<AudioWaveform className="w-16 h-16 text-primary" />
+						<div className="w-32 h-32 rounded-full bg-white flex items-center justify-center">
+							<img src={logospo} alt="Spotify Logo" className="w-28 h-28" />
 						</div>
 					</div>
 					<div className="space-y-2 text-center">
@@ -36,11 +37,25 @@ function LoginPage({ onLogin }) {
 						</ul>
 					</div>
 				</CardContent>
-				<CardFooter>
-					<Button className="w-full" size="lg" onClick={onLogin}>
-						<AudioWaveform className="w-5 h-5 mr-2" />
-						Login with Spotify
+				<CardFooter className="flex flex-col gap-2">
+					<Button
+						className="w-full bg-[#1ED760] hover:bg-[#1DB954]"
+						size="lg"
+						onClick={handleGetSpotify}
+					>
+						GET SPOTIFY FREE
 					</Button>
+					<Button
+						className="w-full"
+						variant="outline"
+						size="lg"
+						onClick={onLogin}
+					>
+						CONNECT WITH SPOTIFY
+					</Button>
+					<p className="text-xs text-center text-muted-foreground">
+						Already have Spotify? Click above to connect
+					</p>
 				</CardFooter>
 			</Card>
 		</div>
