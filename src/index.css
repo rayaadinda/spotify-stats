@@ -58,6 +58,10 @@ button:focus-visible {
 	outline: 4px auto -webkit-focus-ring-color;
 }
 
+.tabs-content-container {
+	min-height: 500px; /* Adjust the height as needed */
+}
+
 @media (prefers-color-scheme: light) {
 	:root {
 		color: #213547;

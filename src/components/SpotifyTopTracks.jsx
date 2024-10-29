@@ -74,7 +74,7 @@ function SpotifyTopTracks() {
 		try {
 			await exportAsImage(
 				exportRef.current,
-				"spotify-monthly-recap",
+				"spotify-month-recap",
 				setExportProgress
 			)
 			// Wait a short moment before resetting
