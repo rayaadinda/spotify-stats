@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react"
+import {
+	getTokenFromUrl,
+	setToken,
+	getStoredToken,
+	clearAuth,
+	getAuthUrl,
+} from "../lib/auth"
 
 export const useSpotify = () => {
-	const [token, setToken] = useState(null)
+	const [token, setTokenState] = useState(getStoredToken())
 	const [profile, setProfile] = useState(null)
 	const [topTracks, setTopTracks] = useState([])
 	const [topGenres, setTopGenres] = useState([])
@@ -18,38 +25,18 @@ export const useSpotify = () => {
 	const [shortTermTopArtists, setShortTermTopArtists] = useState([])
 
 	useEffect(() => {
-		const hash = window.location.hash
-		let token = window.localStorage.getItem("token")
-
-		if (!token && hash) {
-			token = hash
-				.substring(1)
-				.split("&")
-				.find((elem) => elem.startsWith("access_token"))
-				?.split("=")[1]
-
-			if (token) {
-				window.location.hash = ""
-				window.localStorage.setItem("token", token)
-			}
+		const urlToken = getTokenFromUrl()
+		if (urlToken) {
+			setToken(urlToken)
+			setTokenState(urlToken)
+			window.location.hash = ""
+			return
 		}
 
-		// Check if token is expired
-		if (token) {
-			fetch("https://api.spotify.com/v1/me", {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			}).then((response) => {
-				if (response.status === 401) {
-					// Token expired, clear it and redirect to login
-					window.localStorage.removeItem("token")
-					window.location.href = "/" // or your login page URL
-				}
-			})
+		const storedToken = getStoredToken()
+		if (storedToken) {
+			setTokenState(storedToken)
 		}
-
-		setToken(token)
 	}, [])
 
 	const getProfile = async () => {
@@ -324,14 +311,9 @@ export const useSpotify = () => {
 	}, [token])
 
 	const logout = () => {
-		setToken("")
-		setProfile(null)
-		setTopTracks([])
-		setRecentlyPlayed([])
-		setTimeStats(null)
-		window.localStorage.removeItem("token")
-		// Redirect ke login page dengan scope baru
-		window.location.href = loginUrl
+		clearAuth()
+		setTokenState(null)
+		window.location.href = getAuthUrl()
 	}
 
 	return {
