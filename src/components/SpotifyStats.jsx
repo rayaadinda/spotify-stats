@@ -21,6 +21,24 @@ const analyzeListeningTime = (recentlyPlayed) => {
 	return timeByDay
 }
 
+const findMostPlayedTrack = (tracks) => {
+	if (!tracks || tracks.length === 0) {
+		return null
+	}
+
+	const trackCounts = {}
+	tracks.forEach((track) => {
+		const trackId = track.id
+		trackCounts[trackId] = (trackCounts[trackId] || 0) + 1
+	})
+
+	const mostPlayedTrackId = Object.keys(trackCounts).reduce((a, b) =>
+		trackCounts[a] > trackCounts[b] ? a : b
+	)
+
+	return tracks.find((track) => track.id === mostPlayedTrackId)
+}
+
 function StatCard({ title, value, subtitle }) {
 	return (
 		<Card>
@@ -69,6 +87,12 @@ function SpotifyStats({
 
 	const totalMinutesPlayed = calculateTotalMinutes()
 
+	const mostPlayedTrack = findMostPlayedTrack([
+		...shortTermTracks,
+		...mediumTermTracks,
+		...longTermTracks,
+	])
+
 	return (
 		<div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
 			<StatCard
@@ -90,6 +114,13 @@ function SpotifyStats({
 				title="All-Time Top Artist"
 				value={topLongTermArtist?.name || "N/A"}
 				subtitle={`${totalMinutesPlayed} minutes played`}
+			/>
+			<StatCard
+				title="Most Played Track"
+				value={mostPlayedTrack ? mostPlayedTrack.name : "N/A"}
+				subtitle={
+					mostPlayedTrack ? `By ${mostPlayedTrack.artists[0].name}` : ""
+				}
 			/>
 
 			<div className="col-span-full">
